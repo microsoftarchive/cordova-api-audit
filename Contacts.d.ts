@@ -1,147 +1,88 @@
 interface Navigator {
+    service: Service
+}
+
+interface Service {
+}
+
+interface ServiceContacts extends Service {
     contacts: Contacts;
 }
 
 interface Contacts {
-    create(properties?: ContactProperties): Contact;
-    find(fields: string[],
+    create(properties: ContactProperties): Contact;
+    find(filter: ContactProperties,
         onSuccess: (contacts: Contact[]) => void,
-        onError: (error: ContactError) => void,
-        options?: ContactFindOptions): void;
+        onError?: (error: ContactError) => void,
+        options?: ContactFindOptions): PendingOp;
 }
 
 interface ContactProperties {
-    id?: string;
-    displayName?: string;
-    name?: ContactName;
-    nickname?: string;
-    phoneNumbers?: ContactField[];
-    emails?: ContactField[];
-    addresses?: ContactAddress[];
-    ims?: ContactField[];
-    organizations?: ContactOrganization[];
-    birthday?: Date;
-    note?: string;
-    photos?: ContactField[];
-    categories?: ContactField[];
-    urls?: ContactField[];
-}
-
-interface Contact extends ContactProperties {
-    clone(): Contact;
-    remove(onSuccess: () => void,
-        onError: (error: Error) => void): void;
-    save(onSuccess: (contact: Contact) => void,
-        onError: (error: Error) => void): void;
-}
-
-declare var Contact: {
-    new(id?: string,
-        displayName?: string,
-        name?: ContactName,
-        nickname?: string,
-        phoneNumbers?: ContactField[],
-        emails?: ContactField[],
-        addresses?: ContactAddress[],
-        ims?: ContactField[],
-        organizations?: ContactOrganization[],
-        birthday?: Date,
-        note?: string,
-        photos?: ContactField[],
-        categories?: ContactField,
-        urls?: ContactField[]): Contact
+    name?: string;
+    nicknames: string[];
+    phones: ContactField[];
+    emails: ContactField[];
+    addresses: ContactAddress[];
+    impps: ContactField[];
+    serviceId?: string;
+    categories: string[]
 };
 
-interface ContactError {
-    code: number;
-    message: string;
+interface Contact extends ContactProperties {
+    id: string;
+    clone(): Contact;
+    remove(onSuccess: (contact: Contact) => void,
+        onError?: (error: ContactError) => void): PendingOp;
+    save(onSuccess: (contact: Contact) => void,
+        onError?: (error: ContactError) => void): PendingOp;
 }
 
+interface ContactError extends GenericError {
+};
+
 declare var ContactError: {
-    new(code: number): ContactError;
-    UNKNOWN_ERROR: number;
+    CONTACT_NOT_FOUND_ERROR: number;
+    CONTACT_INVALID_ERROR: number;
+}
+
+interface GenericError {
+    code: number;
+};
+
+declare var GenericError: {
+    UNKNOWN_ERR: number;
     INVALID_ARGUMENT_ERROR: number;
-    TIMEOUT_ERROR: number;
+    NOT_FOUND_ERROR: number;
     PENDING_OPERATION_ERROR: number;
     IO_ERROR: number;
     NOT_SUPPORTED_ERROR: number;
     PERMISSION_DENIED_ERROR: number
-};
-
-interface ContactName {
-    formatted?: string;
-    familyName?: string;
-    givenName?: string;
-    middleName?: string;
-    honorificPrefix?: string;
-    honorificSuffix?: string;
 }
-
-declare var ContactName: {
-    new(formatted?: string,
-        familyName?: string,
-        givenName?: string,
-        middleName?: string,
-        honorificPrefix?: string,
-        honorificSuffix?: string): ContactName
-};
 
 interface ContactField {
-    type: string;
+    types: string[];
     value: string;
-    pref: boolean;
-}
-
-declare var ContactField: {
-    new(type?: string,
-        value?: string,
-        pref?: boolean): ContactField
 };
 
 interface ContactAddress {
-    pref?: boolean;
-    type?: string;
-    formatted?: string;
-    streetAddress?: string;
-    locality?: string;
-    region?: string;
-    postalCode?: string;
-    country?: string;
-}
-
-declare var ContactAddress: {
-    new(pref?: boolean,
-        type?: string,
-        formatted?: string,
-        streetAddress?: string,
-        locality?: string,
-        region?: string,
-        postalCode?: string,
-        country?: string): ContactAddress
-};
-
-interface ContactOrganization {
-    pref?: boolean;
-    type?: string;
-    name?: string;
-    department?: string;
-    title?: string;
-}
-
-declare var ContactOrganization: {
-    new(pref?: boolean,
-        type?: string,
-        name?: string,
-        department?: string,
-        title?: string): ContactOrganization
+    premises: string;
+    streetNumber: string;
+    street: string;
+    city: string;
+    county: string;
+    region: string;
+    postalCode: string;
+    country: string;
+    additionalInformation: string;
 };
 
 interface ContactFindOptions {
-    filter?: string;
-    multiple?: boolean;
-}
+    limit: number;
+    page: number;
+    sort?: string;
+    group?: boolean;
+};
 
-declare var ContactFindOptions: {
-    new(filter?: string,
-        multiple?: boolean): ContactFindOptions
+interface PendingOp {
+    cancel(): void;
 };
