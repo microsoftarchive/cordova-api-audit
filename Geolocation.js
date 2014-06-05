@@ -1,36 +1,61 @@
 window.navigator["geolocation"] = Geolocation;
 
 var Geolocation = {
-    lastPosition: null,
-    getCurrentPosition: function (successCallback, errorCallback, options) {
-        return setTimeout (function () {}, 0);
-    },
+    getCurrentPosition: function (successCallback, errorCallback, options) {},
     watchPosition: function (successCallback, errorCallback, options) {
         return watchId;
     },
-    clearWatch: function (id) {}
+    clearWatch: function (watchId) {}
 };
 
-var Position = function (coords, timestamp) {
-    this.coords = coords || new Coordinates();
-    this.timestamp = timestamp || new Date();
+var Position = function () {
+    Object.defineProperty(this, "coords", {
+        get: function () {
+            return new Coordinates();
+        }
+    });
+    Object.defineProperty(this, "timestamp", {
+        get: function () {
+            return new Date();
+        }
+    });
     return this;
 };
 
-var Coordinates = function (latitude, longitude, altitude, accuracy, heading, speed, altitudeAccuracy) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.accuracy = accuracy;
-    this.altitude = altitude;
-    this.heading = heading;
-    this.speed = speed;
-    this.altitudeAccuracy = altitudeAccuracy;
+var Coordinates = function () {
+    Object.defineProperty("latitude", {
+        get: function () {}
+    });
+    Object.defineProperty("longitude", {
+        get: function () {}
+    });
+    Object.defineProperty("altitude", {
+        get: function () {}
+    });
+    Object.defineProperty("accuracy", {
+        get: function () {}
+    });
+    Object.defineProperty("altitudeAccuracy", {
+        get: function () {}
+    });
+    Object.defineProperty("heading", {
+        get: function () {}
+    });
+    Object.defineProperty(this, "speed", {
+        get: function () {}
+    });
     return this;
 };
 
-var PositionError = function (code, message) {
-    this.code = code;
-    this.message = message;
+var PositionError = function () {
+    Object.defineProperty(this, "code", {
+        get: function () {}
+    });
+    Object.defineProperty(this, "message", {
+        get: function () {
+            return this._message;
+        }
+    });
     return this;
 };
 
